@@ -88,7 +88,7 @@ bool isPid(std::string_view str) {
     return "\\d{9}"_ctre.match(str);
 }
 
-std::unordered_map<std::string, std::function<bool(std::string_view)>> CHECKS = {
+std::unordered_map<std::string, std::/*function*/add_pointer_t<bool(std::string_view)>> CHECKS = {
     {"byr", [](auto s) { return isYear(s, 1920, 2002); }},
     {"iyr", [](auto s) { return isYear(s, 2010, 2020); }},
     {"eyr", [](auto s) { return isYear(s, 2020, 2030); }},
@@ -119,8 +119,8 @@ void part1() {
     std::vector<std::vector<std::string>> fields;
 
     for (int i = 0; i < input.size(); i++) {
-        auto line = input[i];
-        if (line.find("\r") != std::string::npos) {
+        auto& line = input[i];
+        if (line.back() == '\r') {
             line.erase(line.end() - 1);
         }
         if (line.empty()) {
@@ -144,7 +144,7 @@ void part1() {
             const auto& id = field[0];
             const auto& val = field[1];
 
-            std::cout << id << "\n";
+            //std::cout << id << "\n";
             if (!CHECKS.contains(id)) {
                 std::cout << " no " << id << '\n';
             }
@@ -162,6 +162,10 @@ void part1() {
 }
 
 int main() {
+    auto start = std::chrono::steady_clock::now();
     part1();
+    auto end = std::chrono::steady_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    std::cout << elapsed.count() << '\n';
     return 0;
 }
